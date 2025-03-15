@@ -2,8 +2,29 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import {connection} from './database/database.js'
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 const App = express()
 const PORT = 3000
+
+
+const options = {
+  definition: {
+    openapi: '3.0.0', // Definindo a versão da especificação OpenAPI
+    info: {
+      title: 'Minha API',
+      version: '1.0.0',
+      description: 'Documentação da API de exemplo',
+    },
+  },
+  apis: ['./index.js'], // Caminho para seus arquivos de rotas, onde você descreverá os endpoints
+};
+
+
+const swaggerSpec = swaggerJsdoc(options);
+
+// Configurando o Swagger UI
+App.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 // informa ao sistema que ira utilizar entradas do tipo json
@@ -107,4 +128,5 @@ App.delete('/produtos/:id', (req,resp)=>{
 //sobe o sitema na porta 3000
 App.listen(PORT, () => {
     console.log(`A aplicação esta rodando na porta ${PORT}`);
+    console.log(`Documentação Swagger em http://localhost:${PORT}/api-docs`);
 })
